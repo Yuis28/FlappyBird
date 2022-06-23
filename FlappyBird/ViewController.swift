@@ -29,7 +29,12 @@ class ViewController: UIViewController {
         skView.presentScene(scene)
         // Do any additional setup after loading the view.
     }
-
+    // ステータスバーを消す --- ここから ---
+        override var prefersStatusBarHidden: Bool {
+            get {
+                return true
+            }
+        } // --- ここまで追加 ---
 
 }
 
