@@ -31,6 +31,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //アイテムスコア用
     var itemscore = 0
     var itemscoreLabelNode: SKLabelNode!
+    let sound = SKAction.playSoundFileNamed("アイテム入手音.mp3", waitForCompletion: false)
     
     //SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -331,8 +332,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             //卵を表示するノードに今回作成した卵を追加
             self.eggNode.addChild(egg)
             
-            //アイテムスコアカウント用の透明な壁を作成
-            
             
         })
         //次の卵作成までの時間待ちのアクションを作成
@@ -366,10 +365,20 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 userDefaults.set(bestScore, forKey: "BEST")
                 userDefaults.synchronize()
             }
-        } else if (contact.) == {
+        } else if (contact.bodyA.categoryBitMask & itemCategory) == itemCategory || (contact.bodyB.categoryBitMask & itemCategory) ==  itemCategory{
             print("ItemScoreUp")
             itemscore += 1
             itemscoreLabelNode.text = "ItemScore: \(score)"
+            
+            //アイテム削除
+            if (contact.bodyA.categoryBitMask & itemCategory) == itemCategory {
+                    contact.bodyA.node?.removeFromParent()
+                  }
+           if (contact.bodyB.categoryBitMask & itemCategory) == itemCategory {
+                    contact.bodyB.node?.removeFromParent()
+                  }
+           run(sound)
+            
             
         } else {
             //壁か地面と衝突した
