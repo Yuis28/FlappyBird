@@ -63,6 +63,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //スコア表示ラベルの設定
         setupScoreLabel()
+        setupItemScoreLabel()
     }
         
     func setupGround() {
@@ -365,6 +366,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                 userDefaults.set(bestScore, forKey: "BEST")
                 userDefaults.synchronize()
             }
+        } else if (contact.) == {
+            print("ItemScoreUp")
+            itemscore += 1
+            itemscoreLabelNode.text = "ItemScore: \(score)"
+            
         } else {
             //壁か地面と衝突した
             print("GameOver")
@@ -425,6 +431,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         bestScoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
         bestScoreLabelNode.text = "Best Score:\(bestScore)"
         self.addChild(bestScoreLabelNode)
+    }
+    
+    func setupItemScoreLabel() {
+        itemscore = 0
+        itemscoreLabelNode = SKLabelNode()
+        itemscoreLabelNode.fontColor = UIColor.black
+        itemscoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 60)
+        itemscoreLabelNode.zPosition = 100
+        itemscoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
+       itemscoreLabelNode.text = "Score:\(score)"
+        self.addChild(itemscoreLabelNode)
     }
 }
 
