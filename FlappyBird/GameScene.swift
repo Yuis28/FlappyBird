@@ -265,7 +265,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         //カテゴリー設定
         bird.physicsBody?.categoryBitMask = birdCategory
         bird.physicsBody?.collisionBitMask = groundCategory | wallCategory
-        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory | scoreCategory
+        bird.physicsBody?.contactTestBitMask = groundCategory | wallCategory | itemCategory
         
         
         //衝突した時に回転させない
@@ -449,7 +449,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         itemscoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 60)
         itemscoreLabelNode.zPosition = 100
         itemscoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
-       itemscoreLabelNode.text = "Score:\(score)"
+        itemscoreLabelNode.text = "Score:\(score)"
         self.addChild(itemscoreLabelNode)
     }
 }
