@@ -224,6 +224,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
                     //透明な壁に物理体を設定する
                     scoreNode.physicsBody = SKPhysicsBody(rectangleOf: CGSize(width: upper.size.width, height: self.frame.size.height))
                     scoreNode.physicsBody?.categoryBitMask = self.scoreCategory
+                    scoreNode.physicsBody?.contactTestBitMask = self.birdCategory
                     scoreNode.physicsBody?.isDynamic = false
                     //壁をまとめるノードに透明な壁を追加
                     wall.addChild(scoreNode)
@@ -291,46 +292,52 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func setupEgg() {
        //卵の画像を読み込む
         let eggTexture = SKTexture(imageNamed: "egg")
-        eggTexture.filteringMode = .nearest
+        eggTexture.filteringMode = .linear
         
         //移動する距離を計算
-        let movingDistance = self.frame.size.width + eggTexture.size().width
+        let movingDistance = CGFloat(self.frame.size.width + eggTexture.size().width)
         
         //画面外まで移動するアクションを作成
         let moveEgg = SKAction.moveBy(x: -movingDistance, y: 0, duration: 4)
-       
+        
         //卵を取り除くアクションを作成
         let removeEgg = SKAction.removeFromParent()
         
         //２つのアニメーションを順に実行するアクションを作成
         let eggAnimation = SKAction.sequence([moveEgg, removeEgg])
         
-        //アイテムの配置位置の揺れ幅50pt
+        //アイテムの配置位置の揺れ幅
+        // 鳥の画像サイズを取得
+        let birdSize = SKTexture(imageNamed: "bird_a").size()
+             
+        // アイテム位置の上下の振れ幅を鳥のサイズの3倍とする
+        let random_y_range = birdSize.height * 3
+        
+        // アイテムのY軸下限位置(中央位置から下方向の最大振れ幅でアイテムを表示する位置)を計算
         let groundSize = SKTexture(imageNamed: "ground").size()
-        let random_y_range: CGFloat = self.frame.size.height - groundSize.height
+        let center_y = groundSize.height + (self.frame.size.height - groundSize.height) / 2
+        let item_lowest_y = center_y - eggTexture.size().height / 2 - random_y_range / 2
         
         //卵を生成するアクションを作成
         let createEggAnimation = SKAction.run({
-            //卵をまとめるノードを作成
-            let egg = SKNode()
-            egg.position = CGPoint(x: self.frame.size.width - 1 / 2, y: 0)
-            egg.zPosition = -50
-            
-            //卵の表示位置を決定
-            let eggPlace = CGFloat.random(in: -random_y_range...random_y_range)
-            
+            // 1〜random_y_rangeまでのランダムな整数を生成
+            let random_y = CGFloat.random(in: 0..<random_y_range)
+            // Y軸の下限にランダムな値を足して、アイテムのY座標を決定
+            let item_y = item_lowest_y + random_y
             //卵を作成
             let eggImagePlace = SKSpriteNode(texture: eggTexture)
-            eggImagePlace.position = CGPoint(x: 0, y :eggPlace)
-            
-            //卵をまとめるノードに卵を追加
-            egg.addChild(eggImagePlace)
+            eggImagePlace.position = CGPoint(x: self.frame.size.width + eggTexture.size().width / 2, y: item_y)
+            eggImagePlace.zPosition = -50
+            //衝突判定
+            // スプライトに物理演算を設定する
+            eggImagePlace.physicsBody = SKPhysicsBody(circleOfRadius: eggTexture.size().width / 2)
+            eggImagePlace.physicsBody?.categoryBitMask = self.itemCategory
             
             //卵をまとめるノードにアニメーションを設定
-            egg.run(eggAnimation)
+            eggImagePlace.run(eggAnimation)
             
             //卵を表示するノードに今回作成した卵を追加
-            self.eggNode.addChild(egg)
+            self.eggNode.addChild(eggImagePlace)
             
             
         })
@@ -338,7 +345,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         let waitEggAnimation = SKAction.wait(forDuration: 1)
 
         //卵を作成->時間まち->卵を作成を無限に繰り返すアクションを作成
-        let repeatEggForeverAnimation = SKAction.repeatForever(SKAction.sequence([createEggAnimation, waitEggAnimation]))
+        let repeatEggForeverAnimation = SKAction.repeatForever(SKAction.sequence([waitEggAnimation, createEggAnimation, waitEggAnimation]))
         
         //卵を表示するノードに卵の作成を無限に繰り返すアクションを設定
         eggNode.run(repeatEggForeverAnimation)
@@ -403,6 +410,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         score = 0
         scoreLabelNode.text = "Score:\(score)"
         
+        itemscore = 0
+        itemscoreLabelNode.text = String("Item:\(itemscore)")
+        
         //鳥を初期位置に戻し、壁と地面の両方に反発するように戻す
         bird.position = CGPoint(x: self.frame.size.width * 0.2, y:self.frame.size.height * 0.7)
         bird.physicsBody?.velocity = CGVector.zero
@@ -411,6 +421,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //全ての壁を取り除く
         wallNode.removeAllChildren()
+        
+        eggNode.removeAllChildren()
         
         //鳥の羽ばたきを戻す
         bird.speed = 1
