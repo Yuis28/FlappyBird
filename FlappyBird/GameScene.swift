@@ -31,7 +31,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     //アイテムスコア用
     var itemscore = 0
     var itemscoreLabelNode: SKLabelNode!
-    let sound = SKAction.playSoundFileNamed("アイテム入手音.mp3", waitForCompletion: false)
+    let sound = SKAction.playSoundFileNamed("アイテム入手音", waitForCompletion: false)
     
     //SKView上にシーンが表示された時に呼ばれるメソッド
     override func didMove(to view: SKView) {
@@ -77,7 +77,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //スクロールするアクションを作成
         //左方向に画像一枚分スクロールさせるアクション
-        let moveGround = SKAction.moveBy(x: -groundTexture.size().width, y: 0, duration: 5)
+        let moveGround = SKAction.moveBy(x: groundTexture.size().width, y: 0, duration: 0)
         
         //元の位置に戻すアクション
         let resetGround = SKAction.moveBy(x: groundTexture.size().width, y: 0, duration: 5)
@@ -122,7 +122,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             
             //スクロールするアクションを作成
             //左方向に画像一枚分スクロールさせるアクション
-            let moveCloud = SKAction.moveBy(x: -cloudTexture.size().width, y: 0, duration: 20)
+            let moveCloud = SKAction.moveBy(x: -cloudTexture.size().width, y: 0, duration: 0)
             
             //元の位置に戻すアクション
             let resetCloud = SKAction.moveBy(x: -cloudTexture.size().width, y: 0, duration: 20)
@@ -458,10 +458,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         itemscore = 0
         itemscoreLabelNode = SKLabelNode()
         itemscoreLabelNode.fontColor = UIColor.black
-        itemscoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 60)
+        itemscoreLabelNode.position = CGPoint(x: 10, y: self.frame.size.height - 120)
         itemscoreLabelNode.zPosition = 100
         itemscoreLabelNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentMode.left
-        itemscoreLabelNode.text = "Score:\(score)"
+        itemscoreLabelNode.text = "Item Score:\(score)"
         self.addChild(itemscoreLabelNode)
     }
 }
