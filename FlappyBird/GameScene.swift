@@ -77,7 +77,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         //スクロールするアクションを作成
         //左方向に画像一枚分スクロールさせるアクション
-        let moveGround = SKAction.moveBy(x: groundTexture.size().width, y: 0, duration: 5)
+        let moveGround = SKAction.moveBy(x: -groundTexture.size().width, y: 0, duration: 5)
         
         //元の位置に戻すアクション
         let resetGround = SKAction.moveBy(x: groundTexture.size().width, y: 0, duration: 0)
@@ -332,6 +332,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             // スプライトに物理演算を設定する
             eggImagePlace.physicsBody = SKPhysicsBody(circleOfRadius: eggTexture.size().width / 2)
             eggImagePlace.physicsBody?.categoryBitMask = self.itemCategory
+            
+            eggImagePlace.physicsBody?.isDynamic = false
             
             //卵をまとめるノードにアニメーションを設定
             eggImagePlace.run(eggAnimation)
